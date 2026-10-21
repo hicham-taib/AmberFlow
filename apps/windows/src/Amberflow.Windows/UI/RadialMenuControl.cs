@@ -4,7 +4,12 @@ using System.Windows.Media;
 using Amberflow.Core.Actions;
 using Amberflow.Core.Geometry;
 using Brush = System.Windows.Media.Brush;
+using Brushes = System.Windows.Media.Brushes;
+using Color = System.Windows.Media.Color;
+using FontFamily = System.Windows.Media.FontFamily;
+using Pen = System.Windows.Media.Pen;
 using Point = System.Windows.Point;
+using Size = System.Windows.Size;
 
 namespace Amberflow.Windows.UI;
 
