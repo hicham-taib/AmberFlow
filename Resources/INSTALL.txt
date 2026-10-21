@@ -1,0 +1,49 @@
+AMBERFLOW 1.7.0
+A compact, local-first file utility for macOS
+
+INSTALL
+1. Drag Amberflow.app onto the Applications shortcut.
+2. Eject this disk image, then open Amberflow from Applications.
+3. Look for Amberflow in the menu bar. There is no Dock icon or main window.
+
+FIRST LAUNCH
+This independently built app is ad hoc signed, not Apple-notarized. macOS may
+block a copy downloaded from the internet. If you trust the person who shared
+it, try opening it once, then use System Settings > Privacy & Security >
+Open Anyway. Do not disable Gatekeeper. Your Mac's security policy may prevent
+opening an unnotarized app.
+
+USE THE WHEEL
+Start dragging a file in Finder or on the Desktop. Keep the mouse button held,
+then hold one of these keys:
+
+  Command  Image tools: compress, metadata, edit, crop, annotate, background,
+           and pixel redaction.
+  Control  File actions: AirDrop, floating preview, copy, move, copy path,
+           and Terminal in the file's folder (or inside a dragged folder).
+  Shift    Convert: PNG, JPG, HEIC, TIFF, PDF, TXT, MD, and ZIP.
+
+Keep dragging onto the desired option and release. Releasing outside the
+wheel dismisses it without performing an Amberflow action. Unsupported
+actions are dimmed. Preferences, recent files, and Quit are in the menu bar.
+
+YOUR FILES
+Image tools and conversions create new files. Move changes the file's location
+after you choose a destination; it preserves existing destination files with
+numbered names. Preferences and recent-file history are stored locally in
+~/Library/Application Support/Amberflow/. No account or cloud service is used.
+
+LIMITATIONS
+PDF edit/crop/annotation use Preview. AirDrop requires selecting a recipient.
+Secure PDF redaction, photographic background removal, Office/media conversion,
+cloud sync, and subscription services are not included. Animated images export
+as one frame; PDF-to-image export uses the first page.
+
+COMPATIBILITY
+macOS 14 Sonoma or later, on Apple Silicon or Intel.
+Both architectures are included; runtime checks were performed on Apple Silicon.
+
+UNINSTALL
+Quit Amberflow from its menu-bar menu, then move Amberflow.app from Applications
+to the Trash. Local preferences/history remain unless you remove the Amberflow
+folder from your user's Library/Application Support folder.
