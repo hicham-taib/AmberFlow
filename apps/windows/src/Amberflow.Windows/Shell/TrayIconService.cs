@@ -1,7 +1,6 @@
 using System.Drawing;
 using System.Windows;
 using Forms = System.Windows.Forms;
-using Application = System.Windows.Application;
 using MessageBox = System.Windows.MessageBox;
 
 namespace Amberflow.Windows.Shell;
@@ -35,7 +34,7 @@ public sealed class TrayIconService : IDisposable
         menu.Items.Add("Amberflow is watching File Explorer", null, (_, _) => ShowAbout());
         menu.Items.Add("About Amberflow", null, (_, _) => ShowAbout());
         menu.Items.Add(new Forms.ToolStripSeparator());
-        menu.Items.Add("Exit", null, (_, _) => Application.Current.Shutdown());
+        menu.Items.Add("Exit", null, (_, _) => System.Windows.Application.Current.Shutdown());
         return menu;
     }
 

@@ -7,6 +7,7 @@ using Brush = System.Windows.Media.Brush;
 using Brushes = System.Windows.Media.Brushes;
 using Color = System.Windows.Media.Color;
 using FontFamily = System.Windows.Media.FontFamily;
+using FlowDirection = System.Windows.FlowDirection;
 using Pen = System.Windows.Media.Pen;
 using Point = System.Windows.Point;
 using Size = System.Windows.Size;
