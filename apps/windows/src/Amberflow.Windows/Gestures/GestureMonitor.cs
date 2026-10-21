@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Threading;
 using Amberflow.Core.Actions;
 using Amberflow.Windows.UI;
+using Point = System.Windows.Point;
 
 namespace Amberflow.Windows.Gestures;
 

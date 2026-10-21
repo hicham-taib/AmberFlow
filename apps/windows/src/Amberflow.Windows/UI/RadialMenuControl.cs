@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Media;
 using Amberflow.Core.Actions;
 using Amberflow.Core.Geometry;
+using Point = System.Windows.Point;
 
 namespace Amberflow.Windows.UI;
 

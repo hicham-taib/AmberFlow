@@ -2,6 +2,7 @@ using System.Collections.Specialized;
 using System.Windows;
 using Amberflow.Application;
 using Amberflow.Core.Actions;
+using Clipboard = System.Windows.Clipboard;
 
 namespace Amberflow.Windows.Actions;
 

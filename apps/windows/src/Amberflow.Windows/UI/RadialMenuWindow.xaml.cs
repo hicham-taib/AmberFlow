@@ -4,6 +4,10 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using Amberflow.Application;
 using Amberflow.Core.Actions;
+using DataFormats = System.Windows.DataFormats;
+using DragDropEffects = System.Windows.DragDropEffects;
+using DragEventArgs = System.Windows.DragEventArgs;
+using Point = System.Windows.Point;
 
 namespace Amberflow.Windows.UI;
 

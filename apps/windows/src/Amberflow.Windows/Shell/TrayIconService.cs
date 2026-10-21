@@ -1,6 +1,8 @@
 using System.Drawing;
 using System.Windows;
 using Forms = System.Windows.Forms;
+using Application = System.Windows.Application;
+using MessageBox = System.Windows.MessageBox;
 
 namespace Amberflow.Windows.Shell;
 

@@ -1,5 +1,6 @@
 using System.Windows;
 using Amberflow.Application;
+using MessageBox = System.Windows.MessageBox;
 
 namespace Amberflow.Windows.Shell;
 
