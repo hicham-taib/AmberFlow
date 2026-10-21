@@ -1,1 +1,22 @@
+# macOS
+.DS_Store
 .build/
+apps/macos/.build/
+apps/macos/build/
+
+# .NET / Visual Studio
+**/bin/
+**/obj/
+.vs/
+*.user
+*.suo
+
+# Release artifacts
+artifacts/
+*.dmg
+*.msix
+*.msixbundle
+
+# Local tooling
+.idea/
+.vscode/

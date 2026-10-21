@@ -1,0 +1,16 @@
+<Window x:Class="Amberflow.Windows.UI.RadialMenuWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="clr-namespace:Amberflow.Windows.UI"
+        Title="Amberflow"
+        Width="360"
+        Height="360"
+        AllowsTransparency="True"
+        AllowDrop="True"
+        Background="Transparent"
+        ShowActivated="False"
+        ShowInTaskbar="False"
+        Topmost="True"
+        WindowStyle="None">
+  <ui:RadialMenuControl x:Name="Menu" />
+</Window>

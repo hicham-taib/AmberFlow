@@ -1,168 +1,117 @@
 # Amberflow
 
-**A fast, native file-action wheel for macOS.**
+**Native radial file actions for macOS and Windows.**
 
-Amberflow turns common Finder workflows into a single drag gesture. Start dragging one or more files, hold a modifier key, and drop onto the action you want—without opening a full application window or breaking your flow.
+Amberflow turns common file-management workflows into one drag gesture. Start dragging files in the operating system's file manager, hold a modifier key, and release onto a contextual action wheel.
 
-Built entirely with SwiftUI and Apple frameworks, Amberflow runs as a lightweight menu-bar utility. It requires no account, cloud service, network connection, or third-party SDK.
+The project favors native frameworks, local processing, explicit platform behavior, and non-destructive file operations. It requires no account or cloud service.
 
-## Highlights
+## Platform status
 
-- Three contextual radial palettes for tools, file actions, and conversions
-- Native image editing, cropping, annotation, background, redaction, and compression
-- Image, PDF, text, Markdown, and ZIP conversion
-- OCR and QR recognition powered by Apple Vision
-- Metadata inspection and metadata-free image copies
-- Quick Look previews, AirDrop, clipboard, Finder, and Terminal integration
-- Collision-safe file moves and non-destructive output naming
-- Recent-file history, favorites, configurable output location, and launch-at-login support
-- Local-only state and processing
-
-## Requirements
-
-- macOS 14 Sonoma or later
-- Apple Silicon or Intel Mac
-- Swift 6 and Xcode Command Line Tools when building from source
-
-## Install from the DMG
-
-1. Open `Amberflow-1.7.0.dmg`.
-2. Drag **Amberflow** into the **Applications** folder.
-3. Launch Amberflow from Applications.
-4. Look for the Amberflow icon in the macOS menu bar.
-
-The current release is ad hoc signed, but it is not Developer ID signed or notarized. If macOS blocks the first launch, open **System Settings → Privacy & Security** and approve Amberflow there.
-
-To uninstall, quit Amberflow, move `/Applications/Amberflow.app` to the Trash, and remove it from **System Settings → General → Login Items** if present.
-
-## Use the action wheel
-
-1. In Finder or on the Desktop, start dragging one or more files.
-2. While continuing to hold the drag, press **Command**, **Control**, or **Shift**.
-3. Move the pointer over an action in the wheel.
-4. Release the file to run the selected action.
-
-Release outside the wheel to cancel. You can switch modifier keys while dragging to change palettes without restarting the gesture.
-
-| Modifier | Palette | Actions |
+| Platform | Status | Technology |
 | --- | --- | --- |
-| **Command (⌘)** | Tools | Compress, Metadata, Edit, Crop, Annotate, Add Background, Redact |
-| **Control (⌃)** | Actions | AirDrop, Float, Copy, Move, Copy Path, Terminal |
-| **Shift (⇧)** | Convert | PNG, JPG, HEIC, TIFF, PDF, TXT, MD, ZIP |
+| macOS 14+ | Production implementation | Swift 6, SwiftUI, AppKit, ImageIO, PDFKit, Vision |
+| Windows 10/11 | Preview implementation | .NET 8, WPF, Win32, Windows Shell |
 
-Amberflow reads file URLs from the active macOS drag pasteboard and observes the current pointer and modifier state. It does not rely on Finder Automation or an Accessibility event tap. Stale drag data and modifier-only key presses do not open the wheel.
+The macOS application includes the complete action set and automated regression coverage. The Windows application now has its native tray lifecycle, File Explorer gesture monitor, radial drop UI, clean action-dispatch architecture, and initial file actions. Image and PDF tools are the next Windows milestone.
 
-## Capabilities
+## Repository structure
 
-### Image tools
-
-- **Edit:** Adjust brightness, contrast, saturation, and rotation.
-- **Crop:** Select and export a rectangular image region.
-- **Annotate:** Add flattened text annotations.
-- **Add Background:** Place a color behind transparent content with optional padding.
-- **Redact:** Permanently replace selected pixels in a flattened PNG.
-- **Compress:** Preview estimated JPEG size and save only when the result is smaller.
-- **Metadata:** Inspect file, EXIF, GPS, and PDF metadata or create a clean image copy.
-
-All image operations create new files and leave the originals unchanged. Animated images are exported as a single frame. PDF editing, cropping, and annotation open in Preview; secure PDF redaction is intentionally unavailable.
-
-### File actions
-
-- **AirDrop** opens the native recipient chooser and never sends automatically.
-- **Float** presents selected files in an always-on-top Quick Look panel.
-- **Copy** places file URLs on the macOS pasteboard.
-- **Move** asks for a destination and adds numbered suffixes instead of overwriting collisions.
-- **Copy Path** copies exact absolute paths separated by newlines.
-- **Terminal** opens a shell in the selected folder or the selected file's containing folder.
-
-### Conversion
-
-| Input | Supported output |
-| --- | --- |
-| Images | PNG, JPG, HEIC, TIFF, PDF, TXT/MD through OCR, ZIP |
-| PDFs | PNG, JPG, HEIC, TIFF from the first page; TXT/MD from text extraction or OCR; ZIP |
-| Plain text and RTF | PDF, TXT, MD, ZIP |
-| Files and folders | ZIP |
-
-Conversions run away from the main UI and display progress. Results are saved beside each source by default, or in the configured output folder. Unsupported combinations are disabled and conversion errors are surfaced to the user.
-
-## Build from source
-
-Clone the repository and build the application bundle:
-
-```sh
-git clone https://github.com/hicham-taib/AmberFlow.git
-cd AmberFlow
-./scripts/build-app.sh
-open build/Amberflow.app
+```text
+AmberFlow/
+├── apps/
+│   ├── macos/       Swift package, resources, tests, and packaging scripts
+│   └── windows/     .NET solution, WPF application, domain core, and tests
+├── docs/            Shared product specification and architecture
+└── scripts/         Repository-level build and test entry points
 ```
 
-The build script compiles a release bundle by default, copies its resources, and applies an ad hoc signature. Pass `debug` to create a debug build instead:
+See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for dependency boundaries and [PRODUCT_SPEC.md](docs/PRODUCT_SPEC.md) for shared behavior, safety rules, and the Windows roadmap.
+
+## Interaction model
+
+| Palette | macOS | Windows | Actions |
+| --- | --- | --- | --- |
+| Tools | Command (⌘) | Alt | Compress, Metadata, Edit, Annotate, Add Background, Crop, Redact |
+| Actions | Control (⌃) | Control | Share/AirDrop, Preview/Float, Copy, Move, Copy Path, Terminal |
+| Convert | Shift (⇧) | Shift | PNG, JPG, HEIC, TIFF, PDF, TXT, MD, ZIP |
+
+Release outside the wheel to cancel. Unsupported actions never report false success, generated files never replace their sources, and destination collisions receive numbered names.
+
+## macOS
+
+### Build and run
 
 ```sh
-./scripts/build-app.sh debug
+./scripts/build-macos.sh
+open apps/macos/build/Amberflow.app
 ```
 
-## Create a distributable DMG
+### Test
 
 ```sh
+./scripts/test-macos.sh
+```
+
+### Create the universal DMG
+
+```sh
+cd apps/macos
 ./scripts/build-dmg.sh
 ```
 
-The packaging script builds separate Apple Silicon and Intel binaries, combines them into a universal application, verifies both architectures and the code signature, then creates:
+The package is written to `apps/macos/build/Amberflow-1.7.0.dmg`. It is ad hoc signed but not Developer ID signed or notarized.
 
-```text
-build/Amberflow-1.7.0.dmg
+Read the [macOS guide](apps/macos/README.md) and [action audit](apps/macos/ACTION_AUDIT.md) for detailed behavior and limitations.
+
+## Windows
+
+### Requirements
+
+- Windows 10 or Windows 11
+- .NET 8 SDK
+- Visual Studio 2022 with the **.NET desktop development** workload, or the .NET CLI
+
+### Build, test, and run
+
+```powershell
+.\scripts\build-windows.ps1
+.\scripts\test-windows.ps1
+dotnet run --project .\apps\windows\src\Amberflow.Windows\Amberflow.Windows.csproj
 ```
 
-The disk image includes an Applications shortcut and installation instructions. To prevent accidental replacement of a release artifact, the script stops if a DMG with the same version already exists.
+### Publish a self-contained preview
 
-## Test and diagnose
-
-Run the automated regression suite:
-
-```sh
-swift test
+```powershell
+.\scripts\publish-windows.ps1 -Runtime win-x64
 ```
 
-The suite covers drag-state transitions, radial hit testing, file moves and clipboard behavior, image operations, metadata removal, OCR, QR recognition, PDF conversion, and ZIP round trips.
+Use `win-arm64` for Windows on Arm. Published files are placed under `artifacts/windows/` and are intentionally excluded from source control.
 
-Optional native integration tests open Terminal with a local QA fixture:
+Successful CI runs publish the self-contained x64 executable as the `Amberflow-Windows-x64` workflow artifact.
 
-```sh
-AMBERFLOW_NATIVE_ACTION_TESTS=1 swift test
-```
+Read the [Windows guide](apps/windows/README.md) for implemented actions and current preview constraints.
 
-Inspect the live Finder gesture state without logging file names or contents:
+## Privacy and safety
 
-```sh
-build/Amberflow.app/Contents/MacOS/Amberflow --gesture-diagnostics
-```
+- File processing occurs locally.
+- No analytics, advertising, account, or network-backed service is included.
+- Conversions and edits create new files.
+- Move operations preserve existing destinations and attempt rollback after partial failure.
+- Sharing always requires a native system handoff and explicit user selection.
+- Diagnostic output does not log file names or contents.
 
-Launch a focused local UI check:
+The macOS app stores recent-file state in `~/Library/Application Support/Amberflow/state.json`. Equivalent Windows settings persistence will be added with the next product milestone.
 
-```sh
-build/Amberflow.app/Contents/MacOS/Amberflow \
-  --check-action crop /absolute/path/to/image.png
-```
+## Contributing
 
-Supported check actions are `edit`, `crop`, `annotate`, `background`, `redact`, `compress`, `metadata`, `float`, and `terminal`.
+Keep platform integrations at the outer edge of the codebase and place reusable rules in the platform-neutral core. New actions should include:
 
-For detailed action-by-action verification and current constraints, see [ACTION_AUDIT.md](ACTION_AUDIT.md).
-
-## Privacy and data
-
-Amberflow performs file processing locally with Apple system frameworks. It does not include analytics, advertising, cloud sync, user accounts, or network-backed services.
-
-Recent-file state is stored at:
-
-```text
-~/Library/Application Support/Amberflow/state.json
-```
-
-## Current scope
-
-Amberflow does not include cloud sync, subscription billing, proprietary Office or media codecs, automatic photographic background removal, secure PDF redaction, or whole-document PDF image export. It is an original implementation and does not copy Tangerine branding or private code.
+1. A documented outcome and supported input set.
+2. Collision and source-preservation behavior.
+3. Unit coverage for domain rules.
+4. A clear unavailable state on platforms where implementation is incomplete.
+5. Manual verification notes for native system handoffs.
 
 ## License
 

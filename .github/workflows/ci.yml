@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  macos:
+    name: macOS tests
+    runs-on: macos-14
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Swift tests
+        run: swift test --package-path apps/macos
+
+  windows:
+    name: Windows build and tests
+    runs-on: windows-2022
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Restore
+        run: dotnet restore apps/windows/Amberflow.Windows.sln
+      - name: Build
+        run: dotnet build apps/windows/Amberflow.Windows.sln --configuration Release --no-restore
+      - name: Test
+        run: dotnet test apps/windows/tests/Amberflow.Core.Tests/Amberflow.Core.Tests.csproj --configuration Release --no-build
+      - name: Publish Windows x64 executable
+        run: >-
+          dotnet publish apps/windows/src/Amberflow.Windows/Amberflow.Windows.csproj
+          --configuration Release
+          --runtime win-x64
+          --self-contained true
+          -p:PublishSingleFile=true
+          -p:DebugType=None
+          --output artifacts/windows/win-x64
+      - name: Upload Windows executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: Amberflow-Windows-x64
+          path: artifacts/windows/win-x64/Amberflow.exe
+          if-no-files-found: error
+          retention-days: 30
