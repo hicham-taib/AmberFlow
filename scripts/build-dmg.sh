@@ -11,11 +11,15 @@ if [[ -e "$DMG" ]]; then
   exit 1
 fi
 
-# Build each architecture without replacing a running build/Amberflow.app.
-swift build -c release --triple arm64-apple-macosx14.0
-ARM_BIN="$(swift build -c release --triple arm64-apple-macosx14.0 --show-bin-path)/Amberflow"
-swift build -c release --triple x86_64-apple-macosx14.0
-INTEL_BIN="$(swift build -c release --triple x86_64-apple-macosx14.0 --show-bin-path)/Amberflow"
+# Build each architecture in a separate scratch directory. Newer SwiftPM
+# versions otherwise reuse one product path and the second build overwrites
+# the first before lipo can combine them.
+ARM_SCRATCH="$ROOT/.build/amberflow-arm64"
+INTEL_SCRATCH="$ROOT/.build/amberflow-x86_64"
+swift build -c release --triple arm64-apple-macosx14.0 --scratch-path "$ARM_SCRATCH"
+ARM_BIN="$(swift build -c release --triple arm64-apple-macosx14.0 --scratch-path "$ARM_SCRATCH" --show-bin-path)/Amberflow"
+swift build -c release --triple x86_64-apple-macosx14.0 --scratch-path "$INTEL_SCRATCH"
+INTEL_BIN="$(swift build -c release --triple x86_64-apple-macosx14.0 --scratch-path "$INTEL_SCRATCH" --show-bin-path)/Amberflow"
 
 STAGING="$(mktemp -d "$ROOT/build/.amberflow-dmg.XXXXXX")"
 cleanup() {
@@ -34,7 +38,8 @@ cp ACTION_AUDIT.md "$APP/Contents/Resources/ActionAudit.md"
 chmod +x "$APP/Contents/MacOS/Amberflow"
 codesign --force --sign - "$APP"
 codesign --verify --deep --strict "$APP"
-xcrun lipo "$APP/Contents/MacOS/Amberflow" -verify_arch arm64 x86_64
+xcrun lipo "$APP/Contents/MacOS/Amberflow" -verify_arch arm64
+xcrun lipo "$APP/Contents/MacOS/Amberflow" -verify_arch x86_64
 
 ln -s /Applications "$STAGING/Applications"
 cp Resources/INSTALL.txt "$STAGING/Read Me.txt"
