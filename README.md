@@ -1,78 +1,103 @@
-# Amberflow
+<p align="center">
+  <img src="docs/assets/amberflow-hero.png" alt="Amberflow radial file actions on macOS and Windows" width="920">
+</p>
 
-**Native radial file actions for macOS and Windows.**
+<h1 align="center">Amberflow</h1>
 
-Amberflow turns common file-management workflows into one drag gesture. Start dragging files in the operating system's file manager, hold a modifier key, and release onto a contextual action wheel.
+<p align="center">
+  <strong>Your files already know where they need to go.</strong><br>
+  Drag, hold a modifier, and release onto the action you want.
+</p>
 
-The project favors native frameworks, local processing, explicit platform behavior, and non-destructive file operations. It requires no account or cloud service.
+<p align="center">
+  <a href="https://github.com/hicham-taib/AmberFlow/actions/workflows/ci.yml"><img alt="Build status" src="https://github.com/hicham-taib/AmberFlow/actions/workflows/ci.yml/badge.svg"></a>
+  <img alt="macOS 14 or later" src="https://img.shields.io/badge/macOS-14%2B-111827?logo=apple&logoColor=white">
+  <img alt="Windows 10 and 11" src="https://img.shields.io/badge/Windows-10%20%7C%2011-0078D4?logo=windows&logoColor=white">
+  <img alt="Swift 6" src="https://img.shields.io/badge/Swift-6-F05138?logo=swift&logoColor=white">
+  <img alt=".NET 8" src="https://img.shields.io/badge/.NET-8-512BD4?logo=dotnet&logoColor=white">
+</p>
+
+Amberflow is a native desktop utility that turns everyday file operations into one fluid gesture. Instead of opening menus, switching windows, or memorizing shortcuts, drag files from Finder or File Explorer and choose an action from a contextual radial menu.
+
+Everything runs locally. There is no account, cloud service, analytics, or advertising.
+
+## How it works
+
+| 1. Drag | 2. Hold | 3. Drop |
+| :---: | :---: | :---: |
+| Pick up one or more files in Finder or File Explorer. | Hold **Command / Control / Shift** on macOS, or **Alt / Control / Shift** on Windows. | Release over an action. Release outside the wheel to cancel. |
+
+The modifier selects a palette, so the wheel stays focused instead of becoming another crowded menu.
+
+| Palette | macOS | Windows | Typical actions |
+| --- | :---: | :---: | --- |
+| **Tools** | Command (⌘) | Alt | Compress, metadata, crop, redact, annotate |
+| **Actions** | Control (⌃) | Control | Preview, copy, move, copy path, terminal, share |
+| **Convert** | Shift (⇧) | Shift | PNG, JPG, HEIC, TIFF, PDF, TXT, MD, ZIP |
+
+## Quick start
+
+| macOS | Windows |
+| --- | --- |
+| Requires macOS 14 or later. | Requires Windows 10 or 11 (x64). |
+| Build the app with `./scripts/build-macos.sh`, then open `apps/macos/build/Amberflow.app`. | Open the latest successful [CI run](https://github.com/hicham-taib/AmberFlow/actions/workflows/ci.yml), download `Amberflow-Windows-x64`, extract it, and run `Amberflow.Windows.exe`. |
+| To create an installer, run `cd apps/macos && ./scripts/build-dmg.sh`. | Windows may show a SmartScreen warning while preview builds are unsigned. Choose **More info → Run anyway** only if you obtained the build from this repository. |
+
+> [!NOTE]
+> The Windows edition is currently a preview. Copy, move, copy path, preview/open, terminal, and ZIP are implemented; image and PDF tools are still being brought across from macOS.
+
+## What you get
+
+| | Capability | Details |
+| --- | --- | --- |
+| ⚡ | **Fast file actions** | Common operations stay under the pointer and take one gesture. |
+| 🧭 | **Contextual palettes** | Tools are grouped by intent and selected with familiar modifier keys. |
+| 🔒 | **Private by design** | File names, contents, and operations stay on your computer. |
+| 🛟 | **Non-destructive defaults** | Edits and conversions create new files; collisions receive numbered names. |
+| 🖥️ | **Native on both platforms** | SwiftUI/AppKit on macOS and WPF/Win32 on Windows. |
+| 🧪 | **Tested core behavior** | Domain rules and file-operation safeguards have automated coverage. |
 
 ## Platform status
 
-| Platform | Status | Technology |
-| --- | --- | --- |
-| macOS 14+ | Production implementation | Swift 6, SwiftUI, AppKit, ImageIO, PDFKit, Vision |
-| Windows 10/11 | Preview implementation | .NET 8, WPF, Win32, Windows Shell |
-
-The macOS application includes the complete action set and automated regression coverage. The Windows application now has its native tray lifecycle, File Explorer gesture monitor, radial drop UI, clean action-dispatch architecture, and initial file actions. Image and PDF tools are the next Windows milestone.
-
-## Repository structure
-
-```text
-AmberFlow/
-├── apps/
-│   ├── macos/       Swift package, resources, tests, and packaging scripts
-│   └── windows/     .NET solution, WPF application, domain core, and tests
-├── docs/            Shared product specification and architecture
-└── scripts/         Repository-level build and test entry points
-```
-
-See [ARCHITECTURE.md](docs/ARCHITECTURE.md) for dependency boundaries and [PRODUCT_SPEC.md](docs/PRODUCT_SPEC.md) for shared behavior, safety rules, and the Windows roadmap.
-
-## Interaction model
-
-| Palette | macOS | Windows | Actions |
+| Platform | Stage | Stack | Current scope |
 | --- | --- | --- | --- |
-| Tools | Command (⌘) | Alt | Compress, Metadata, Edit, Annotate, Add Background, Crop, Redact |
-| Actions | Control (⌃) | Control | Share/AirDrop, Preview/Float, Copy, Move, Copy Path, Terminal |
-| Convert | Shift (⇧) | Shift | PNG, JPG, HEIC, TIFF, PDF, TXT, MD, ZIP |
+| **macOS 14+** | Production implementation | Swift 6, SwiftUI, AppKit, ImageIO, PDFKit, Vision | Complete action set and regression coverage |
+| **Windows 10/11** | Public preview | .NET 8, WPF, Win32, Windows Shell | Native tray lifecycle, Explorer gesture monitor, radial UI, and core file actions |
 
-Release outside the wheel to cancel. Unsupported actions never report false success, generated files never replace their sources, and destination collisions receive numbered names.
+## Safety first
 
-## macOS
+Amberflow is designed around predictable file handling:
 
-### Build and run
+- Processing happens entirely on-device.
+- Conversions and edits never replace source files.
+- Existing destinations are preserved with collision-safe names.
+- Move operations attempt rollback after a partial failure.
+- Sharing requires an explicit native system handoff.
+- Diagnostic output does not record file names or contents.
+
+<details>
+<summary><strong>Build and test locally</strong></summary>
+
+### macOS
 
 ```sh
 ./scripts/build-macos.sh
+./scripts/test-macos.sh
 open apps/macos/build/Amberflow.app
 ```
 
-### Test
-
-```sh
-./scripts/test-macos.sh
-```
-
-### Create the universal DMG
+Create the universal DMG:
 
 ```sh
 cd apps/macos
 ./scripts/build-dmg.sh
 ```
 
-The package is written to `apps/macos/build/Amberflow-1.7.0.dmg`. It is ad hoc signed but not Developer ID signed or notarized.
+The DMG is written to `apps/macos/build/Amberflow-1.7.0.dmg`. Local packages are ad hoc signed, not Developer ID signed or notarized.
 
-Read the [macOS guide](apps/macos/README.md) and [action audit](apps/macos/ACTION_AUDIT.md) for detailed behavior and limitations.
+### Windows
 
-## Windows
-
-### Requirements
-
-- Windows 10 or Windows 11
-- .NET 8 SDK
-- Visual Studio 2022 with the **.NET desktop development** workload, or the .NET CLI
-
-### Build, test, and run
+Install the [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) and Visual Studio 2022 with the **.NET desktop development** workload, then run:
 
 ```powershell
 .\scripts\build-windows.ps1
@@ -80,39 +105,48 @@ Read the [macOS guide](apps/macos/README.md) and [action audit](apps/macos/ACTIO
 dotnet run --project .\apps\windows\src\Amberflow.Windows\Amberflow.Windows.csproj
 ```
 
-### Publish a self-contained preview
+Create a self-contained x64 build:
 
 ```powershell
 .\scripts\publish-windows.ps1 -Runtime win-x64
 ```
 
-Use `win-arm64` for Windows on Arm. Published files are placed under `artifacts/windows/` and are intentionally excluded from source control.
+Use `win-arm64` for Windows on Arm. Published files are written under `artifacts/windows/`.
 
-Successful CI runs publish the self-contained x64 executable as the `Amberflow-Windows-x64` workflow artifact.
+</details>
 
-Read the [Windows guide](apps/windows/README.md) for implemented actions and current preview constraints.
+<details>
+<summary><strong>Project structure</strong></summary>
 
-## Privacy and safety
+```text
+AmberFlow/
+├── apps/
+│   ├── macos/       Swift package, native app, tests, and packaging
+│   └── windows/     .NET solution, WPF app, domain core, and tests
+├── docs/            Product specification, architecture, and media
+└── scripts/         Cross-platform build and test entry points
+```
 
-- File processing occurs locally.
-- No analytics, advertising, account, or network-backed service is included.
-- Conversions and edits create new files.
-- Move operations preserve existing destinations and attempt rollback after partial failure.
-- Sharing always requires a native system handoff and explicit user selection.
-- Diagnostic output does not log file names or contents.
+Platform integrations stay at the outer edge of the codebase, while reusable behavior lives in platform-neutral domain code.
 
-The macOS app stores recent-file state in `~/Library/Application Support/Amberflow/state.json`. Equivalent Windows settings persistence will be added with the next product milestone.
+</details>
+
+## Documentation
+
+- [Architecture](docs/ARCHITECTURE.md)
+- [Product specification](docs/PRODUCT_SPEC.md)
+- [macOS development guide](apps/macos/README.md)
+- [macOS action audit](apps/macos/ACTION_AUDIT.md)
+- [Windows development guide](apps/windows/README.md)
 
 ## Contributing
 
-Keep platform integrations at the outer edge of the codebase and place reusable rules in the platform-neutral core. New actions should include:
-
-1. A documented outcome and supported input set.
-2. Collision and source-preservation behavior.
-3. Unit coverage for domain rules.
-4. A clear unavailable state on platforms where implementation is incomplete.
-5. Manual verification notes for native system handoffs.
+Contributions are welcome. New actions should document their supported inputs, collision behavior, source-preservation rules, native handoffs, and automated coverage. Keep unavailable features explicit—Amberflow should never report an action as successful when it did not run.
 
 ## License
 
 No open-source license has been declared. All rights are reserved unless the repository owner states otherwise.
+
+<p align="center">
+  <sub>Built to keep file work fast, local, and close to your cursor.</sub>
+</p>
